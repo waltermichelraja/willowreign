@@ -8,11 +8,13 @@ import dev.willow.engine.GameConfig;
 import dev.willow.engine.InningsState;
 import dev.willow.engine.MatchResult;
 import dev.willow.engine.TossDecision;
+import dev.willow.engine.gameplay.GameContext;
+import dev.willow.engine.gameplay.GamePlayer;
+import dev.willow.engine.gameplay.PlayerFactory;
+import dev.willow.engine.gameplay.PlayerWillow;
 import dev.willow.engine.rules.InningsRules;
 import dev.willow.ui.Screen;
 import dev.willow.ui.ScreenManager;
-import dev.willow.engine.cpu.PlayerWillow;
-import dev.willow.engine.cpu.GameContext;
 
 // import java.util.Random;
 
@@ -26,7 +28,8 @@ public class InningsScreen implements Screen{
     private Phase resumePhase;
 
     private final InningsState state=new InningsState();
-    private final PlayerWillow willow=new PlayerWillow();
+    private final PlayerWillow willow=PlayerFactory.create(GamePlayer.WILSON); // JUSTIN, WILSON, CLARK
+    // private final PlayerWillow willow=new NormalMode();
     // private final Random random=new Random();
 
     private boolean playerBatting;
@@ -91,7 +94,7 @@ public class InningsScreen implements Screen{
         int effectiveTarget=(phase==Phase.SECOND)?target:-1;
         GameContext context=new GameContext(effectiveTarget, !playerBatting, ballsLeft, wicketsLeft);
 
-        int opponentInput=willow.nextMove(!playerBatting, state,context);
+        int opponentInput=willow.nextMove(!playerBatting, state, context);
         int battingMove=playerBatting?playerInput:opponentInput;
         int bowlingMove=playerBatting?opponentInput:playerInput;
         lastBattingMove=battingMove;

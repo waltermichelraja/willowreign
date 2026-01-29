@@ -1,4 +1,4 @@
-package dev.willow.engine.cpu;
+package dev.willow.engine.gameplay;
 
 public class GameContext{
     public final int target;

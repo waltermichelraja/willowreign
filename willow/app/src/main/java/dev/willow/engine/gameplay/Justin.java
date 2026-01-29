@@ -1,10 +1,10 @@
-package dev.willow.engine.cpu;
+package dev.willow.engine.gameplay;
 
 import dev.willow.engine.InningsState;
 
 import java.util.Random;
 
-public class PlayerWillow{
+public class Justin implements PlayerWillow{
     private final Random random=new Random();
     private Integer lastMove=null;
 
