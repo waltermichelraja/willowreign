@@ -4,6 +4,7 @@ import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import dev.willow.engine.GameConfig;
+import dev.willow.engine.gameplay.GamePlayer;
 import dev.willow.ui.Screen;
 import dev.willow.ui.ScreenManager;
 import dev.willow.ui.widgets.MenuWidget;
@@ -13,11 +14,13 @@ import java.util.OptionalInt;
 
 public class WicketsConfigScreen implements Screen{
     private final ScreenManager manager;
+    private final GamePlayer player;
     private final OptionalInt overs;
     private final MenuWidget menu;
 
-    public WicketsConfigScreen(ScreenManager manager, OptionalInt overs){
+    public WicketsConfigScreen(ScreenManager manager, GamePlayer player, OptionalInt overs){
         this.manager=manager;
+        this.player=player;
         this.overs=overs;
         this.menu=new MenuWidget(List.of("1 wicket", "2 wickets", "custom", "unlimited"));
     }
@@ -47,7 +50,7 @@ public class WicketsConfigScreen implements Screen{
     }
 
     private void finish(OptionalInt wickets){
-        GameConfig config=new GameConfig(overs, wickets);
+        GameConfig config=new GameConfig(player, overs, wickets);
         manager.show(new TossScreen(manager, config));
     }
 }

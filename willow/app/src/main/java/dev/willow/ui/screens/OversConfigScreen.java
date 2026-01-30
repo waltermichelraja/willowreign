@@ -3,6 +3,8 @@ package dev.willow.ui.screens;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+
+import dev.willow.engine.gameplay.GamePlayer;
 import dev.willow.ui.Screen;
 import dev.willow.ui.ScreenManager;
 import dev.willow.ui.widgets.MenuWidget;
@@ -12,10 +14,12 @@ import java.util.OptionalInt;
 
 public class OversConfigScreen implements Screen{
     private final ScreenManager manager;
+    private final GamePlayer player;
     private final MenuWidget menu;
 
-    public OversConfigScreen(ScreenManager manager){
+    public OversConfigScreen(ScreenManager manager, GamePlayer player){
         this.manager=manager;
+        this.player=player;
         this.menu=new MenuWidget(List.of("1 over", "2 overs", "custom", "unlimited"));
     }
 
@@ -35,11 +39,11 @@ public class OversConfigScreen implements Screen{
         }
         if(menu.isSelected(key)){
             switch(menu.selectedIndex()){
-                case 0->manager.show(new WicketsConfigScreen(manager, OptionalInt.of(1)));
-                case 1->manager.show(new WicketsConfigScreen(manager, OptionalInt.of(2)));
+                case 0->manager.show(new WicketsConfigScreen(manager, player, OptionalInt.of(1)));
+                case 1->manager.show(new WicketsConfigScreen(manager, player, OptionalInt.of(2)));
                 case 2->manager.show(new CustomConfigScreen(manager, "overs per innings", 15, value->manager.show(
-                    new WicketsConfigScreen(manager, OptionalInt.of(value))), this));
-                case 3->manager.show(new WicketsConfigScreen(manager, OptionalInt.empty()));
+                    new WicketsConfigScreen(manager, player, OptionalInt.of(value))), this));
+                case 3->manager.show(new WicketsConfigScreen(manager, player, OptionalInt.empty()));
             }
         }
     }

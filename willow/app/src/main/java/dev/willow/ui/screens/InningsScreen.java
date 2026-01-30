@@ -9,7 +9,6 @@ import dev.willow.engine.InningsState;
 import dev.willow.engine.MatchResult;
 import dev.willow.engine.TossDecision;
 import dev.willow.engine.gameplay.GameContext;
-import dev.willow.engine.gameplay.GamePlayer;
 import dev.willow.engine.gameplay.PlayerFactory;
 import dev.willow.engine.gameplay.PlayerWillow;
 import dev.willow.engine.rules.InningsRules;
@@ -28,7 +27,8 @@ public class InningsScreen implements Screen{
     private Phase resumePhase;
 
     private final InningsState state=new InningsState();
-    private final PlayerWillow willow=PlayerFactory.create(GamePlayer.WILSON); // JUSTIN, WILSON, CLARK
+    private final PlayerWillow willow;
+    // private final PlayerWillow willow=PlayerFactory.create(GamePlayer.WILSON); // JUSTIN, WILSON, CLARK
     // private final PlayerWillow willow=new NormalMode();
     // private final Random random=new Random();
 
@@ -48,6 +48,7 @@ public class InningsScreen implements Screen{
     public InningsScreen(ScreenManager manager, GameConfig config, TossDecision decision, boolean playerWonToss) {
         this.manager=manager;
         this.config=config;
+        this.willow=PlayerFactory.create(config.getPlayer());
         if(playerWonToss){playerBatting=(decision==TossDecision.BAT);} 
         else{playerBatting=(decision==TossDecision.BOWL);}
     }
@@ -89,7 +90,7 @@ public class InningsScreen implements Screen{
         if(c<'0' || c>'6'){return;}
 
         int playerInput=c-'0';
-        int ballsLeft=config.getOversPerInnings().isPresent()?config.getOversPerInnings().getAsInt()*6-state.getBalls():Integer.MAX_VALUE;
+        int ballsLeft=config.getOversPerInnings().isPresent()?Math.max(0, config.getOversPerInnings().getAsInt()*6-state.getBalls()):Integer.MAX_VALUE;
         int wicketsLeft=config.getWicketsPerInnings().isPresent()?config.getWicketsPerInnings().getAsInt()-state.getWickets():Integer.MAX_VALUE;
         int effectiveTarget=(phase==Phase.SECOND)?target:-1;
         GameContext context=new GameContext(effectiveTarget, !playerBatting, ballsLeft, wicketsLeft);
