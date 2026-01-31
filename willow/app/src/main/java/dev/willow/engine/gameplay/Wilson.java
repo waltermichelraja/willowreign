@@ -11,9 +11,7 @@ public class Wilson implements PlayerWillow{
 
     @Override
     public int nextMove(boolean batting, InningsState state, GameContext context){
-        int move;
-        if(batting){move=bat(state,context);}
-        else{move=bowl(context);}
+        int move=batting?bat(state,context):bowl();
         secondLastMove=lastMove;
         lastMove=move;
         return move;
@@ -22,6 +20,7 @@ public class Wilson implements PlayerWillow{
     private int bat(InningsState state, GameContext context){
         if(context.chasing && context.target>0){
             int req=context.target-state.getRuns();
+            if(req<=3){return randomBetween(3, 6);}
             if(req<=6){return randomBetween(2, 6);}
             if(req<=12){return randomBetween(2, 5);}
         }
@@ -29,17 +28,20 @@ public class Wilson implements PlayerWillow{
         return weightedRandom(new int[]{0,1,2,3,4,5,6}, new int[]{1,1,2,3,4,3,2});
     }
 
-    private int bowl(GameContext context){
+    private int bowl(){
         int candidate;
+        int safety=0;
         if(lastMove==null && secondLastMove==null){return randomBetween(0, 6);}
-        do{candidate=randomBetween(0, 6);
-        }while((lastMove!=null && candidate==lastMove) || (secondLastMove!=null && candidate==secondLastMove));
+        do{
+            candidate=randomBetween(0, 6);
+            safety++;
+        }while(((lastMove!=null && candidate==lastMove) || (secondLastMove!=null && candidate==secondLastMove)) && safety<10);
         return candidate;
     }
 
-    private int randomBetween(int min,int max){return random.nextInt(max-min+1)+min;}
+    private int randomBetween(int min, int max){return random.nextInt(max-min+1)+min;}
 
-    private int weightedRandom(int[] values,int[] weights){
+    private int weightedRandom(int[] values, int[] weights){
         int total=0;
         for(int w:weights){total+=w;}
         int r=random.nextInt(total);

@@ -10,9 +10,7 @@ public class Clark implements PlayerWillow{
 
     @Override
     public int nextMove(boolean batting, InningsState state, GameContext context){
-        int move;
-        if(batting){move=bat(state,context);}
-        else{move=bowl(context,state);}
+        int move=batting?bat(state,context):bowl(context,state);
         lastMove=move;
         return move;
     }
@@ -21,16 +19,14 @@ public class Clark implements PlayerWillow{
         int runs=state.getRuns();
         if(context.chasing && context.target>0){
             int req=context.target-runs;
-            if(req<=3){return randomBetween(1, 2);}
+            if(req<=2){return randomBetween(1, 2);}
+            if(req<=4){return randomBetween(2, 3);}
             if(req<=6){return randomBetween(2, 4);}
             if(req<=12){return randomBetween(3, 5);}
         }
-        if(context.wicketsLeft<=1){return randomBetween(1,3);}
-        if(context.ballsLeft>12){
-            return weightedRandom(new int[]{1,2,3,4,5,6}, new int[]{1,2,3,4,3,2});
-        }
-        return weightedRandom(new int[]{0,1,2,3,4,5,6}, new int[]{1,2,3,3,3,2,1}
-        );
+        if(context.wicketsLeft<=1){return randomBetween(1, 3);}
+        if(context.ballsLeft>12){return weightedRandom(new int[]{1,2,3,4,5,6}, new int[]{1,2,3,4,3,2});}
+        return weightedRandom(new int[]{0,1,2,3,4,5,6}, new int[]{1,2,3,3,3,2,1});
     }
 
     private int bowl(GameContext context, InningsState state){
@@ -40,8 +36,11 @@ public class Clark implements PlayerWillow{
             if(req<=6){return randomBetween(1, 3);}
         }
         int candidate;
-        do{candidate=randomBetween(0, 6);
-        }while(candidate==lastMove);
+        int safety=0;
+        do{
+            candidate=randomBetween(0, 6);
+            safety++;
+        }while(candidate==lastMove && safety<10);
         return candidate;
     }
 
