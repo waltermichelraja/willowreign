@@ -8,11 +8,14 @@ import dev.willow.engine.GameConfig;
 import dev.willow.engine.InningsState;
 import dev.willow.engine.MatchResult;
 import dev.willow.engine.TossDecision;
+import dev.willow.engine.gameplay.GameContext;
+import dev.willow.engine.gameplay.PlayerFactory;
+import dev.willow.engine.gameplay.PlayerWillow;
 import dev.willow.engine.rules.InningsRules;
 import dev.willow.ui.Screen;
 import dev.willow.ui.ScreenManager;
 
-import java.util.Random;
+// import java.util.Random;
 
 public class InningsScreen implements Screen{
     private enum Phase {FIRST, SECOND, PAUSED}
@@ -24,7 +27,10 @@ public class InningsScreen implements Screen{
     private Phase resumePhase;
 
     private final InningsState state=new InningsState();
-    private final Random random=new Random();
+    private final PlayerWillow willow;
+    // private final PlayerWillow willow=PlayerFactory.create(GamePlayer.WILSON); // JUSTIN, WILSON, CLARK
+    // private final PlayerWillow willow=new NormalMode();
+    // private final Random random=new Random();
 
     private boolean playerBatting;
     private boolean playerChasing;
@@ -42,6 +48,7 @@ public class InningsScreen implements Screen{
     public InningsScreen(ScreenManager manager, GameConfig config, TossDecision decision, boolean playerWonToss) {
         this.manager=manager;
         this.config=config;
+        this.willow=PlayerFactory.create(config.getPlayer());
         if(playerWonToss){playerBatting=(decision==TossDecision.BAT);} 
         else{playerBatting=(decision==TossDecision.BOWL);}
     }
@@ -83,7 +90,12 @@ public class InningsScreen implements Screen{
         if(c<'0' || c>'6'){return;}
 
         int playerInput=c-'0';
-        int opponentInput=random.nextInt(7);
+        int ballsLeft=config.getOversPerInnings().isPresent()?Math.max(0, config.getOversPerInnings().getAsInt()*6-state.getBalls()):Integer.MAX_VALUE;
+        int wicketsLeft=config.getWicketsPerInnings().isPresent()?config.getWicketsPerInnings().getAsInt()-state.getWickets():Integer.MAX_VALUE;
+        int effectiveTarget=(phase==Phase.SECOND)?target:-1;
+        GameContext context=new GameContext(effectiveTarget, !playerBatting, ballsLeft, wicketsLeft);
+
+        int opponentInput=willow.nextMove(!playerBatting, state, context);
         int battingMove=playerBatting?playerInput:opponentInput;
         int bowlingMove=playerBatting?opponentInput:playerInput;
         lastBattingMove=battingMove;

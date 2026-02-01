@@ -49,10 +49,12 @@ public class TossScreen implements Screen{
 
     @Override
     public void handleInput(KeyStroke key){
-        if(state==State.WAITING && key.getKeyType()==KeyType.Enter){
+        if(state==State.WAITING&&key.getKeyType()==KeyType.Enter){
+            try{Thread.sleep(2000);}catch(InterruptedException e){Thread.currentThread().interrupt();}
             playerWonToss=random.nextBoolean();
-            if(playerWonToss){state = State.PLAYER_CHOICE;}
-            else{
+            if(playerWonToss){
+                state=State.PLAYER_CHOICE;
+            }else{
                 decision=random.nextBoolean()?TossDecision.BAT:TossDecision.BOWL;
                 state=State.DONE;
             }

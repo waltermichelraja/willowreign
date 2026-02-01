@@ -31,7 +31,7 @@ public class MainMenuScreen implements Screen{
     public void handleInput(KeyStroke key){
         if(key.getKeyType()==KeyType.ArrowUp || key.getKeyType()==KeyType.ArrowDown){menu.handleInput(key);}
         if(menu.isSelected(key)){
-            if(menu.selectedIndex()==0){manager.show(new OversConfigScreen(manager));}
+            if(menu.selectedIndex()==0){manager.show(new OpponentConfigScreen(manager));}
             if(menu.selectedIndex()==1){System.exit(0);}
         }
     }
