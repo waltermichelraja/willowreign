@@ -3,6 +3,9 @@ package dev.willow.ui.screens;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.SGR;
+import com.googlecode.lanterna.TextColor;
+
 import dev.willow.ui.Screen;
 import dev.willow.ui.ScreenManager;
 import dev.willow.ui.widgets.MenuWidget;
@@ -21,9 +24,15 @@ public class MainMenuScreen implements Screen{
     @Override
     public void render(){
         TextGraphics tg=manager.terminal().newTextGraphics();
+        tg.setForegroundColor(TextColor.ANSI.CYAN);
+        tg.enableModifiers(SGR.BOLD);
         tg.putString(5, 2, "WELCOME TO THE  W I L L O W");
+        tg.disableModifiers(SGR.BOLD);
+        tg.setForegroundColor(TextColor.ANSI.BLUE);
         tg.putString(5, 3, "---------------------------");
+        tg.setForegroundColor(TextColor.ANSI.WHITE);
         tg.putString(5, 5, "use ARROW-KEYS and ENTER");
+        tg.setForegroundColor(TextColor.ANSI.DEFAULT);
         menu.render(tg, 5, 7);
     }
 
